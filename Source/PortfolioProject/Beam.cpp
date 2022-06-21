@@ -3,6 +3,7 @@
 
 #include "Beam.h"	
 #include "NiagaraSystem.h"
+#include "BaseCharacter.h"
 
 // Sets default values
 ABeam::ABeam()
@@ -12,9 +13,6 @@ ABeam::ABeam()
 
 	BeamMesh = CreateDefaultSubobject<USceneComponent>(TEXT("Beam Root"));
 	RootComponent = BeamMesh;
-
-	ImpactMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Particle Trail"));
-	ImpactMesh->SetupAttachment(RootComponent);
 }
 
 // Called when the beam object is spawned
@@ -54,9 +52,9 @@ void ABeam::Tick(float DeltaTime)
 		for (int32 i = 0; i < HitResultArray.Num(); i++)
 		{
 			AActor* HitActor = HitResultArray[i].GetActor();
-			if (HitActor == nullptr) return;
+			if (HitActor == nullptr) continue;
 			AActor* OwnerActor = GetOwner();
-			if (OwnerActor == nullptr) return;
+			if (OwnerActor == nullptr) continue;
 
 			if (HitActor != OwnerActor)
 			{
@@ -79,9 +77,8 @@ bool ABeam::BeamTrace(TArray<FHitResult>& OutHitResultArray)
 	Params.AddIgnoredActor(GetOwner());
 
 	FCollisionShape Shape = FCollisionShape::MakeSphere(BeamRadius);
-
 	// Returns an Array of FHitResults
-	return GetWorld()->SweepMultiByChannel(OutHitResultArray, BeamLocation, End, BeamRotation.Quaternion(), ECollisionChannel::ECC_WorldDynamic, Shape);
+	return GetWorld()->SweepMultiByChannel(OutHitResultArray, BeamLocation, End, BeamRotation.Quaternion(), ECollisionChannel::ECC_WorldDynamic, Shape, Params);
 }
 
 // Deal the Damage to Traced Actors
