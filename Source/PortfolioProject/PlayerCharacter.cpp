@@ -40,6 +40,9 @@ void APlayerCharacter::BeginPlay()
 
 	CurrentSpell = CurrentSpellClass.GetDefaultObject();
 	if (CurrentSpell == nullptr) return;
+
+	// Sets the interval between spells to default
+	CurrentSpellInterval = DefaultSpellRate;
 }
 
 // Called every frame
@@ -95,6 +98,8 @@ void APlayerCharacter::StopCastingSpell()
 	{
 		SetIsCasting(false);
 	}
+	// Reset the interval between spells to default
+	CurrentSpellInterval = DefaultSpellRate;
 }
 
 // Spawns the Arcane Blast Spell
